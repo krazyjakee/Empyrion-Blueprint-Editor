@@ -1,0 +1,15 @@
+{ 
+	"blocktypes": {
+		"135": "Steel Block",
+		"46": "Core",
+		"156": "Combat Steel Block",
+		"138": "Hardened Steel Block",
+		"1": "Cockpit",
+		"160": "Truss Blocks",
+		"80": "Warp Drive Tank",
+		"11": "Fuel Tank (T3)",
+		"10": "Large Generator (T2)",
+		"7": "Large O2 Tank",
+		"35": "O2 Station (CV/BA)"
+	}
+}
