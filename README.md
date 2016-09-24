@@ -13,6 +13,12 @@ Byte identification. If you think you have found something, open an issue or sen
 
 ### Testing notes
 
+Useful console commands for creative mode are `godmode 1` and `itemmenu 1`. You have to type these in whenever you change location in-game. The itemmenu can be viewed by pressing `h`. Don't use the itemmenu inside a cockpit or passenger seat.
+
+Blueprints are found in `/SteamApps/common/Empyrion - Galactic Survival/Saves/Blueprints`.
+
+In-game, after creating any vessel or base, aim roughly towards the core and hold `altGr + o` to save a new blueprint. Modify the craft and do this again to `Overwrite` the blueprint. You can then analyse differences in version to potentially identify new bytes.
+
 My god, be sure to backup all your precious blueprints before tinkering with them.
 
-Some HEX editors lock the blueprint file, so when overwriting in-game, Empyrion may create a new blueprint with `_1` postfixed if the blueprint is locked and/or delete the previous blueprint entirely.
+Some HEX editors lock the blueprint file, so when overwriting in-game, Empyrion may create an entire new blueprint with `_1` postfixed if the blueprint is locked and/or delete the previous blueprint entirely.
