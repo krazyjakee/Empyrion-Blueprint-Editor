@@ -76,6 +76,12 @@ var hex2int = function(bytes){
 	return parseInt("0x" + bytes, 16);
 }
 
+var hex2string = function(bytes){
+	return bytes.map(function(b){
+		return String.fromCharCode(hex2int(b));
+	}).join('');
+}
+
 var get_data = {
 	
 	type: function(){
@@ -90,14 +96,16 @@ var get_data = {
 
 	blocks: function(){
 
+		var ab = active_blueprint.bytes;
+
 		// Parse block type index
-		var type_count = hex2int(active_blueprint.bytes[137] + active_blueprint.bytes[136]);
+		var type_count = hex2int(ab[137] + ab[136]);
 		var type_index = [];
 		var start_byte = 138;
 		var end_bytes = start_byte + (type_count * 8);
 		for(var i = start_byte; i < end_bytes; i += 8){
-			var id = hex2int(active_blueprint.bytes[i]);
-			var b_type = active_blueprint.bytes.slice(i, i + 8);
+			var id = hex2int(ab[i]);
+			var b_type = ab.slice(i, i + 8);
 			type_index.push({
 				id: id,
 				name: block_types[id] || "Unknown",
@@ -106,13 +114,48 @@ var get_data = {
 			});
 		}
 
+		// Parse unit group (control panel group) index
+		var unit_group_index = [];
+		var start_byte = (138 + (type_count * 8)) + 2;
+		var unit_group_count = hex2int(ab[start_byte - 1]);
+		
+		var i = 0,
+		unit_group_index_progress = 0;
+		while(i < unit_group_count){
+			unit_group_index_progress++; // bypass padding byte
+			var string_length = hex2int(ab[start_byte + unit_group_index_progress]); // length of the following string
+			unit_group_index_progress++; // next
+			var name = hex2string(ab.slice(start_byte + unit_group_index_progress, start_byte + unit_group_index_progress + string_length));
+			unit_group_index_progress += string_length + 1; // next plus a padding byte with value 1
+			var group_item_count = hex2int(ab[start_byte + unit_group_index_progress]); // number of items in the group
+			unit_group_index_progress++; // next
+
+			data = [];
+			var j = group_item_count;
+			while(j){
+				unit_group_index_progress++;
+				data.push(ab.slice(start_byte + unit_group_index_progress, start_byte + unit_group_index_progress + 4));
+				unit_group_index_progress += 4;
+				j--;
+			}
+
+			unit_group_index.push({
+				name: name,
+				item_count: group_item_count,
+				data: data
+			});
+			i++;
+		}
+
+
 		return {
-			count: hex2int(active_blueprint.bytes[133] + active_blueprint.bytes[132]),
+			count: hex2int(ab[133] + ab[132]),
 			type_count: type_count,
 			types: type_index,
-			width: hex2int(active_blueprint.bytes[9]),
-			height: hex2int(active_blueprint.bytes[13]),
-			depth: hex2int(active_blueprint.bytes[17]),
+			unit_groups: unit_group_index,
+			width: hex2int(ab[9]),
+			height: hex2int(ab[13]),
+			depth: hex2int(ab[17]),
 		}
 	}
 }
